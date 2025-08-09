@@ -9,6 +9,7 @@ import (
 
 func main() {
 	app := application.New()
+	app.Routes()
 	app.StartServer()
 
 	// Wait for interrupt signal to gracefully shut down

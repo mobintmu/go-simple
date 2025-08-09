@@ -1,48 +1,55 @@
 package application
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/gin-gonic/gin"
 )
 
 type Application struct {
-	Port string
+	Port   string
+	Router *gin.Engine
 }
 
 const defaultPort = ":4000"
 
 func New() *Application {
+	// Set release mode
+	gin.SetMode(gin.DebugMode)
+
+	// Use New() for full control, or Default() if you're okay with built-ins
+	router := gin.New()
+
+	// Add middleware explicitly
+	router.Use(gin.Logger())
+	router.Use(gin.Recovery())
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = defaultPort
-	} else if port[0] != ':' {
-		port = ":" + port
 	}
-	return &Application{Port: port}
+	return &Application{Port: port, Router: router}
 }
 
 func (app *Application) StartServer() {
-	// router
-	mux := http.NewServeMux()
-	mux.HandleFunc("/", helloHandler)
-
 	//start the server
 	go func() {
-		log.Printf("Starting server at port %s", app.Port)
-		err := http.ListenAndServe(app.Port, mux)
+		log.Printf("Starting Gin server at port %s", app.Port)
+		err := app.Router.Run(app.Port)
 		if err != nil {
 			log.Fatal(err)
 		}
 	}()
 }
 
-func helloHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
-		return
-	}
-	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
-	fmt.Fprint(w, "Hello World")
+func (a *Application) Routes() {
+	a.Router.GET("/", helloHandler)
+}
+
+func helloHandler(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{
+		"message": "hello world",
+	})
 }

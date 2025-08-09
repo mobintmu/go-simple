@@ -1,6 +1,7 @@
 package test
 
 import (
+	"encoding/json"
 	"io"
 	"net/http"
 	"testing"
@@ -11,6 +12,7 @@ import (
 
 func startTestServer() {
 	a := application.New()
+	a.Routes()
 	a.StartServer()
 	time.Sleep(200 * time.Millisecond) // Give server time to start
 }
@@ -19,7 +21,7 @@ func TestHelloWorldEndpoint(t *testing.T) {
 	t.Parallel()
 	startTestServer()
 
-	resp, err := http.Get("http://localhost:4000/")
+	resp, err := http.Get("http://localhost:4000")
 	if err != nil {
 		t.Fatalf("Failed to send GET request: %v", err)
 	}
@@ -34,8 +36,19 @@ func TestHelloWorldEndpoint(t *testing.T) {
 		t.Fatalf("Failed to read response body: %v", err)
 	}
 
-	expected := "Hello World"
-	if string(body) != expected {
-		t.Errorf("Expected body '%s', got '%s'", expected, string(body))
+	// Parse JSON
+	var data map[string]string
+	err = json.Unmarshal(body, &data)
+	if err != nil {
+		t.Fatalf("Expected JSON response, got error: %v", err)
+	}
+
+	// Validate the message
+	message, ok := data["message"]
+	if !ok {
+		t.Fatalf("Missing 'message' field in response: %v", data)
+	}
+	if message != "hello world" {
+		t.Errorf("Expected message 'hello world', got '%s'", message)
 	}
 }
