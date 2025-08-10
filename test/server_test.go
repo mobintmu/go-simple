@@ -17,11 +17,11 @@ func startTestServer() {
 	time.Sleep(200 * time.Millisecond) // Give server time to start
 }
 
-func TestHelloWorldEndpoint(t *testing.T) {
+func TestHealthEndpoint(t *testing.T) {
 	t.Parallel()
 	startTestServer()
 
-	resp, err := http.Get("http://localhost:4000")
+	resp, err := http.Get("http://localhost:4000/api/v1/health")
 	if err != nil {
 		t.Fatalf("Failed to send GET request: %v", err)
 	}
@@ -48,7 +48,7 @@ func TestHelloWorldEndpoint(t *testing.T) {
 	if !ok {
 		t.Fatalf("Missing 'message' field in response: %v", data)
 	}
-	if message != "hello world" {
+	if message != "OK" {
 		t.Errorf("Expected message 'hello world', got '%s'", message)
 	}
 }

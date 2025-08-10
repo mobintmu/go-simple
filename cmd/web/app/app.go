@@ -1,10 +1,11 @@
-package application
+package app
 
 import (
 	"log"
-	"net/http"
 	"os"
+	"time"
 
+	"github.com/gin-contrib/timeout"
 	"github.com/gin-gonic/gin"
 )
 
@@ -25,6 +26,7 @@ func New() *Application {
 	// Add middleware explicitly
 	router.Use(gin.Logger())
 	router.Use(gin.Recovery())
+	router.Use(timeout.New(timeout.WithTimeout(60 * time.Second))) // timeout middleware
 
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -34,7 +36,6 @@ func New() *Application {
 }
 
 func (app *Application) StartServer() {
-	//start the server
 	go func() {
 		log.Printf("Starting Gin server at port %s", app.Port)
 		err := app.Router.Run(app.Port)
@@ -42,14 +43,4 @@ func (app *Application) StartServer() {
 			log.Fatal(err)
 		}
 	}()
-}
-
-func (a *Application) Routes() {
-	a.Router.GET("/", helloHandler)
-}
-
-func helloHandler(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{
-		"message": "hello world",
-	})
 }
