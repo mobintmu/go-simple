@@ -1,0 +1,24 @@
+definitions:
+  cmd_web_app.HealthResponse:
+    properties:
+      message:
+        example: OK
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /health:
+    get:
+      description: Returns the health status of the API
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/cmd_web_app.HealthResponse'
+      summary: Get health status
+      tags:
+      - Health
+swagger: "2.0"
