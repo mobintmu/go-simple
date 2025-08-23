@@ -1,5 +1,6 @@
 # go-simple
 
+This is a simple Go project structure with Gin framework and Swagger documentation.
 
 ## Run project
 
