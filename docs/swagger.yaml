@@ -1,5 +1,5 @@
 definitions:
-  cmd_web_app.HealthResponse:
+  internal_health_controller.HealthResponse:
     properties:
       message:
         example: OK
@@ -17,8 +17,21 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/cmd_web_app.HealthResponse'
+            $ref: '#/definitions/internal_health_controller.HealthResponse'
       summary: Get health status
+      tags:
+      - Health
+  /slow:
+    get:
+      description: Simulates a slow response to test timeout handling
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: This is a slow response
+          schema:
+            $ref: '#/definitions/internal_health_controller.HealthResponse'
+      summary: Simulate a slow endpoint
       tags:
       - Health
 swagger: "2.0"

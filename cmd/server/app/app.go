@@ -1,6 +1,7 @@
 package app
 
 import (
+	health "go-simple/internal/health/controller"
 	"log"
 	"os"
 	"time"
@@ -10,8 +11,9 @@ import (
 )
 
 type Application struct {
-	Port   string
-	Router *gin.Engine
+	Port       string
+	Router     *gin.Engine
+	healthCtrl *health.Health
 }
 
 const defaultPort = ":4000"
@@ -28,11 +30,19 @@ func New() *Application {
 	router.Use(gin.Recovery())
 	router.Use(timeout.New(timeout.WithTimeout(60 * time.Second))) // timeout middleware
 
+	// Register Controller
+	healthCtrl := health.New()
+
+	//set port
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = defaultPort
 	}
-	return &Application{Port: port, Router: router}
+	return &Application{
+		Port:       port,
+		Router:     router,
+		healthCtrl: healthCtrl,
+	}
 }
 
 func (app *Application) StartServer() {

@@ -1,7 +1,7 @@
 package main
 
 import (
-	application "go-simple/cmd/web/app"
+	application "go-simple/cmd/server/app"
 	"os"
 	"os/signal"
 	"syscall"
@@ -9,7 +9,7 @@ import (
 
 func main() {
 	app := application.New()
-	app.Routes()
+	app.RegisterRoutes()
 	app.StartServer()
 
 	// Wait for interrupt signal to gracefully shut down

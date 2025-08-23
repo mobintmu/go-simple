@@ -29,7 +29,27 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/cmd_web_app.HealthResponse"
+                            "$ref": "#/definitions/internal_health_controller.HealthResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/slow": {
+            "get": {
+                "description": "Simulates a slow response to test timeout handling",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Health"
+                ],
+                "summary": "Simulate a slow endpoint",
+                "responses": {
+                    "200": {
+                        "description": "This is a slow response",
+                        "schema": {
+                            "$ref": "#/definitions/internal_health_controller.HealthResponse"
                         }
                     }
                 }
@@ -37,7 +57,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "cmd_web_app.HealthResponse": {
+        "internal_health_controller.HealthResponse": {
             "type": "object",
             "properties": {
                 "message": {

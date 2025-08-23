@@ -7,10 +7,10 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-func (a *Application) Routes() {
+func (a *Application) RegisterRoutes() {
 	api := a.Router.Group("/api/v1/")
-	api.GET("/health", HealthHandler)
-	api.GET("/slow", SlowHandler)
+	api.GET("/health", a.healthCtrl.HealthHandler)
+	api.GET("/slow", a.healthCtrl.SlowHandler)
 
 	//  Set Swagger metadata dynamically
 	docs.SwaggerInfo.Title = "My API"

@@ -7,12 +7,12 @@ import (
 	"testing"
 	"time"
 
-	application "go-simple/cmd/web/app"
+	application "go-simple/cmd/server/app"
 )
 
 func startTestServer() {
 	a := application.New()
-	a.Routes()
+	a.RegisterRoutes()
 	a.StartServer()
 	time.Sleep(200 * time.Millisecond) // Give server time to start
 }

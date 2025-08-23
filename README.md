@@ -3,9 +3,9 @@
 
 ## Run project
 
-go run cmd/web/main.go
+go run cmd/server/main.go
 
 ## Generate Swagger Documentation
 
-swag init --parseDependency --parseInternal -g cmd/web/main.go
+swag init --parseDependency --parseInternal -g cmd/server/main.go
 
