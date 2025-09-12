@@ -7,7 +7,7 @@ import (
 
 func TestSlowEndpoint(t *testing.T) {
 	t.Parallel()
-	startTestServer()
+	// startTestServer()
 
 	resp, err := http.Get("http://localhost:4000/api/v1/slow")
 	if err != nil {

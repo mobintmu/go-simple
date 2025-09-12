@@ -8,6 +8,7 @@
             "mode": "auto",
             "program": "${workspaceFolder}/cmd/server/main.go",
             "args": [],
-            "showLog": true        }
+            "showLog": true        
+        }
     ]
 }
