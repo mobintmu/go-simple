@@ -6,21 +6,37 @@ This is a simple Go project structure with Gin framework and Swagger documentati
 
 go run cmd/server/main.go
 
+## Swagger address
+
+http://127.0.0.1:4000/swagger/index.html#/
+
 ## Generate Swagger Documentation
 
 swag init --parseDependency --parseInternal -g cmd/server/main.go
 
 
-
 ## Run tests
 
 ```
-go test server_test.go
+go test ./test/server_test.go
 
 ```
 
+## Run Sonar
 
-## add sonar test
+```
+docker run --name sonarqube \
+  -p 9000:9000 \
+  sonarqube:latest
+
+
+go test -coverprofile=coverage.out ./...
+
+go test ./... -json > report.json
+```
+
+
+## Add sonar test
 
 ```
 sonar-scanner \
@@ -30,6 +46,7 @@ sonar-scanner \
   -Dsonar.token=sqp_XXXX
 ```
 
+```
 export SONAR_HOST_URL=http://your-sonarqube-server.com
 export SONAR_TOKEN=your-sonar-token-here
-
+```
