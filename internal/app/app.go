@@ -2,6 +2,7 @@ package app
 
 import (
 	"go-simple/internal/config"
+	"go-simple/internal/db/migrate"
 	"go-simple/internal/health"
 	"go-simple/internal/server"
 
@@ -15,10 +16,12 @@ func NewApp() *fx.App {
 			health.New,
 			server.NewGinEngine,
 			server.CreateHTTPServer,
+			migrate.NewRunner, // ← migration runner
 		),
 		fx.Invoke(
 			server.RegisterRoutes,
 			server.StartHTTPServer,
+			migrate.RunMigrations, // ← migration hook
 		),
 	)
 }

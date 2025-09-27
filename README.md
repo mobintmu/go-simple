@@ -15,6 +15,16 @@ http://127.0.0.1:4000/swagger/index.html#/
 swag init --parseDependency --parseInternal -g cmd/server/main.go
 
 
+## Run docker compose
+
+docker compose up -d
+
+## SQLC Generator
+
+```
+sqlc generate
+```
+
 ## Run tests
 
 ```
