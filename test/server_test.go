@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 	"testing"
 	"time"
 
@@ -16,6 +17,10 @@ import (
 )
 
 func StartHTTPServer() *fx.App {
+	os.Setenv("APP_HTTP_PORT", "4000")
+	os.Setenv("APP_ENV", "test")
+	os.Setenv("APP_DATABASE_DSN", "postgresql://user:pass@localhost:5432/database?sslmode=disable")
+
 	a := app.NewApp()
 	go a.Run()
 	time.Sleep(300 * time.Millisecond) // give server time to start

@@ -18,7 +18,7 @@ RETURNING id, name, description, price, is_active, created_at
 type CreateProductParams struct {
 	Name        string
 	Description string
-	Price       string
+	Price       int64
 	IsActive    bool
 }
 
@@ -113,7 +113,7 @@ type UpdateProductParams struct {
 	ID          int32
 	Name        string
 	Description string
-	Price       string
+	Price       int64
 	IsActive    bool
 }
 

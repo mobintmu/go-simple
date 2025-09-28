@@ -13,6 +13,7 @@ func New() *Health {
 	return &Health{}
 }
 
+// Health godoc
 // @Summary Get health status
 // @Description Returns the health status of the API
 // @Tags Health

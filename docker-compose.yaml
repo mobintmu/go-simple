@@ -17,6 +17,11 @@ services:
     ports:
       - "5432:5432"
     restart: unless-stopped
+  sonar:
+    image: sonarqube:latest
+    ports:
+      - "9000:9000"
+    restart: unless-stopped
 
 volumes:
   redis-data:

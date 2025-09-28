@@ -1,4 +1,44 @@
 definitions:
+  go-simple_internal_http_response.ErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  go-simple_internal_product_dto.AdminCreateProductRequest:
+    properties:
+      description:
+        type: string
+      is_active:
+        type: boolean
+      name:
+        type: string
+      price:
+        type: integer
+    type: object
+  go-simple_internal_product_dto.AdminUpdateProductRequest:
+    properties:
+      description:
+        type: string
+      id:
+        type: integer
+      is_active:
+        type: boolean
+      name:
+        type: string
+      price:
+        type: integer
+    type: object
+  go-simple_internal_product_dto.ProductResponse:
+    properties:
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      price:
+        type: integer
+    type: object
   internal_health.HealthResponse:
     properties:
       message:
@@ -8,6 +48,183 @@ definitions:
 info:
   contact: {}
 paths:
+  /api/v1/admin/products:
+    get:
+      description: Get a list of all products
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/go-simple_internal_product_dto.ProductResponse'
+              type: array
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/go-simple_internal_http_response.ErrorResponse'
+      summary: List all products
+      tags:
+      - Admin Products
+    post:
+      consumes:
+      - application/json
+      description: Create a new product with the provided details
+      parameters:
+      - description: Product to create
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/go-simple_internal_product_dto.AdminCreateProductRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/go-simple_internal_product_dto.ProductResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/go-simple_internal_http_response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/go-simple_internal_http_response.ErrorResponse'
+      summary: Create a new product
+      tags:
+      - Admin Products
+  /api/v1/admin/products/{id}:
+    delete:
+      description: Delete a product by its ID
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/go-simple_internal_http_response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/go-simple_internal_http_response.ErrorResponse'
+      summary: Delete a product by ID
+      tags:
+      - Admin Products
+    get:
+      description: Get a product by its ID
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-simple_internal_product_dto.ProductResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/go-simple_internal_http_response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/go-simple_internal_http_response.ErrorResponse'
+      summary: Get a product by ID
+      tags:
+      - Admin Products
+    put:
+      consumes:
+      - application/json
+      description: Update product details by ID
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Updated product details
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/go-simple_internal_product_dto.AdminUpdateProductRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-simple_internal_product_dto.ProductResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/go-simple_internal_http_response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/go-simple_internal_http_response.ErrorResponse'
+      summary: Update an existing product
+      tags:
+      - Admin Products
+  /api/v1/products:
+    get:
+      description: Get a list of all products
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/go-simple_internal_product_dto.ProductResponse'
+              type: array
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/go-simple_internal_http_response.ErrorResponse'
+      summary: List all products
+      tags:
+      - Products
+  /api/v1/products/{id}:
+    get:
+      description: Get a product by its ID
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-simple_internal_product_dto.ProductResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/go-simple_internal_http_response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/go-simple_internal_http_response.ErrorResponse'
+      summary: Get a product by ID
+      tags:
+      - Products
   /health:
     get:
       description: Returns the health status of the API

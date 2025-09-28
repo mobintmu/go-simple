@@ -7,14 +7,10 @@ import (
 	"net/http"
 	"time"
 
-	"go-simple/docs"
 	"go-simple/internal/config"
-	"go-simple/internal/health"
 
 	"github.com/gin-contrib/timeout"
 	"github.com/gin-gonic/gin"
-	swaggerFiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
 	"go.uber.org/fx"
 )
 
@@ -64,18 +60,4 @@ func StartHTTPServer(lc fx.Lifecycle, srv *http.Server) {
 			return nil
 		},
 	})
-}
-
-// RegisterRoutes is an Fx Invoke that wires up your HTTP routes
-func RegisterRoutes(engine *gin.Engine, health *health.Health, cfg *config.Config) {
-	log.Println("🚀 Registering routes...")
-	engine.GET("/health", health.Handle)
-	//  Set Swagger metadata dynamically
-	docs.SwaggerInfo.Title = "My API"
-	docs.SwaggerInfo.Version = "1.0"
-	docs.SwaggerInfo.Description = "This is a sample API with Gin and Swagger."
-	docs.SwaggerInfo.Host = fmt.Sprintf("%s:%d", cfg.HTTPAddress, cfg.HTTPPort)
-	docs.SwaggerInfo.BasePath = "/"
-	docs.SwaggerInfo.Schemes = []string{"http"} // or {"https"} in production
-	engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 }
