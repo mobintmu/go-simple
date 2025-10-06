@@ -5,6 +5,7 @@ import (
 	"go-simple/internal/db/migrate"
 	"go-simple/internal/db/sqlc"
 	"go-simple/internal/health"
+	"go-simple/internal/pkg/logger"
 	productController "go-simple/internal/product/controller"
 	productService "go-simple/internal/product/service"
 	"go-simple/internal/server"
@@ -15,6 +16,7 @@ import (
 func NewApp() *fx.App {
 	return fx.New(
 		fx.Provide(
+			logger.NewLogger,
 			config.NewConfig,
 			config.InitialDB,
 			health.New,
@@ -30,6 +32,7 @@ func NewApp() *fx.App {
 			server.RegisterRoutes,
 			server.StartHTTPServer,
 			migrate.RunMigrations, // migration hook
+			logger.RegisterLoggerLifecycle,
 		),
 	)
 }

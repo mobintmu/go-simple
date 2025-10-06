@@ -4,14 +4,20 @@ import (
 	"context"
 	"go-simple/internal/db/sqlc"
 	"go-simple/internal/product/dto"
+
+	"go.uber.org/zap"
 )
 
 type Product struct {
-	Q *sqlc.Queries
+	Q   *sqlc.Queries
+	log *zap.Logger
 }
 
-func New(q *sqlc.Queries) *Product {
-	return &Product{Q: q}
+func New(q *sqlc.Queries, log *zap.Logger) *Product {
+	return &Product{
+		Q:   q,
+		log: log,
+	}
 }
 
 func (s *Product) Create(ctx context.Context, req dto.AdminCreateProductRequest) (dto.ProductResponse, error) {
@@ -25,6 +31,7 @@ func (s *Product) Create(ctx context.Context, req dto.AdminCreateProductRequest)
 	if err != nil {
 		return dto.ProductResponse{}, err
 	}
+	s.log.Info("Product created", zap.Int32("id", product.ID))
 	return dto.ProductResponse{
 		ID:          product.ID,
 		Name:        product.Name,

@@ -60,3 +60,12 @@ sonar-scanner \
 export SONAR_HOST_URL=http://your-sonarqube-server.com
 export SONAR_TOKEN=your-sonar-token-here
 ```
+
+
+
+## Run project
+
+```
+docker compose up
+go run cmd/server/main.go
+```
