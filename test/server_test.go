@@ -34,7 +34,7 @@ func WithTestServer(t *testing.T, testFunc func()) {
 }
 
 func TestHealthEndpoint(t *testing.T) {
-	t.Parallel()
+	// t.Parallel()
 	WithTestServer(t, func() {
 		cfg, err := config.NewConfig()
 		if err != nil {

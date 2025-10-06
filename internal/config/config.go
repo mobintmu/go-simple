@@ -36,7 +36,7 @@ func NewConfig() (*Config, error) {
 		},
 		ENV: v.GetString("ENV"),
 	}
-	log.Printf("✅ Loaded config: %+v\n", cfg)
+	log.Printf("✅ Loaded config") //: %+v\n", cfg)
 	return cfg, nil
 }
 
