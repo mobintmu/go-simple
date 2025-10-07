@@ -18,12 +18,24 @@ services:
       - "5432:5432"
     restart: unless-stopped
   sonar:
-    image: sonarqube:latest
+    image: sonarqube:latest  
     ports:
       - "9000:9000"
+    volumes:
+      - sonar-data:/opt/sonarqube/data
+      - sonar-extensions:/opt/sonarqube/extensions
+      - sonar-logs:/opt/sonarqube/logs
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 2g
+        reservations:
+          memory: 2g
 
 volumes:
   redis-data:
   postgres-data:
   sonar-data:
+  sonar-logs:
+  sonar-extensions:
