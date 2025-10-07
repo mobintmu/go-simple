@@ -22,10 +22,10 @@ func New(q *sqlc.Queries, log *zap.Logger) *Product {
 
 func (s *Product) Create(ctx context.Context, req dto.AdminCreateProductRequest) (dto.ProductResponse, error) {
 	arg := sqlc.CreateProductParams{
-		Name:        req.Name,
-		Description: req.Description,
-		Price:       req.Price,
-		IsActive:    true,
+		ProductName:        req.Name,
+		ProductDescription: req.Description,
+		Price:              req.Price,
+		IsActive:           true,
 	}
 	product, err := s.Q.CreateProduct(ctx, arg)
 	if err != nil {
@@ -34,19 +34,19 @@ func (s *Product) Create(ctx context.Context, req dto.AdminCreateProductRequest)
 	s.log.Info("Product created", zap.Int32("id", product.ID))
 	return dto.ProductResponse{
 		ID:          product.ID,
-		Name:        product.Name,
-		Description: product.Description,
+		Name:        product.ProductName,
+		Description: product.ProductDescription,
 		Price:       product.Price,
 	}, nil
 }
 
 func (s *Product) Update(ctx context.Context, req dto.AdminUpdateProductRequest) (dto.ProductResponse, error) {
 	arg := sqlc.UpdateProductParams{
-		ID:          int32(req.ID),
-		Name:        req.Name,
-		Description: req.Description,
-		Price:       req.Price,
-		IsActive:    req.IsActive,
+		ID:                 int32(req.ID),
+		ProductName:        req.Name,
+		ProductDescription: req.Description,
+		Price:              req.Price,
+		IsActive:           req.IsActive,
 	}
 	product, err := s.Q.UpdateProduct(ctx, arg)
 	if err != nil {
@@ -54,8 +54,8 @@ func (s *Product) Update(ctx context.Context, req dto.AdminUpdateProductRequest)
 	}
 	return dto.ProductResponse{
 		ID:          product.ID,
-		Name:        product.Name,
-		Description: product.Description,
+		Name:        product.ProductName,
+		Description: product.ProductDescription,
 		Price:       product.Price,
 	}, nil
 }
@@ -71,8 +71,8 @@ func (s *Product) GetProductByID(ctx context.Context, id int32) (dto.ProductResp
 	}
 	return dto.ProductResponse{
 		ID:          product.ID,
-		Name:        product.Name,
-		Description: product.Description,
+		Name:        product.ProductName,
+		Description: product.ProductDescription,
 		Price:       product.Price,
 	}, nil
 }
@@ -86,8 +86,8 @@ func (s *Product) ListProducts(ctx context.Context) (dto.ClientListProductsRespo
 	for _, product := range products {
 		resp = append(resp, dto.ProductResponse{
 			ID:          product.ID,
-			Name:        product.Name,
-			Description: product.Description,
+			Name:        product.ProductName,
+			Description: product.ProductDescription,
 			Price:       product.Price,
 		})
 	}

@@ -1,5 +1,5 @@
 -- name: CreateProduct :one
-INSERT INTO products (name, description, price, is_active)
+INSERT INTO products (product_name, product_description, price, is_active)
 VALUES ($1, $2, $3, $4)
 RETURNING *;
 
@@ -11,7 +11,7 @@ SELECT * FROM products ORDER BY created_at DESC;
 
 -- name: UpdateProduct :one
 UPDATE products
-SET name = $2, description = $3, price = $4, is_active = $5
+SET product_name = $2, product_description = $3, price = $4, is_active = $5
 WHERE id = $1
 RETURNING *;
 

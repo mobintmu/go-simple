@@ -9,10 +9,10 @@ import (
 )
 
 type Product struct {
-	ID          int32
-	Name        string
-	Description string
-	Price       int64
-	IsActive    bool
-	CreatedAt   time.Time
+	ID                 int32
+	ProductName        string
+	ProductDescription string
+	Price              int64
+	IsActive           bool
+	CreatedAt          time.Time
 }

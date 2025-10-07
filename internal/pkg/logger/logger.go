@@ -17,6 +17,7 @@ func NewLogger() (*zap.Logger, error) {
 func RegisterLoggerLifecycle(lc fx.Lifecycle, log *zap.Logger) {
 	lc.Append(fx.Hook{
 		OnStop: func(ctx context.Context) error {
+			log.Info("⏹️ On Stop Logger Life cycle ⏹️")
 			if err := log.Sync(); err != nil && !isIgnorableSyncError(err) {
 				return err
 			}

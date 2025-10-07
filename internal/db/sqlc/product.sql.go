@@ -10,30 +10,30 @@ import (
 )
 
 const createProduct = `-- name: CreateProduct :one
-INSERT INTO products (name, description, price, is_active)
+INSERT INTO products (product_name, product_description, price, is_active)
 VALUES ($1, $2, $3, $4)
-RETURNING id, name, description, price, is_active, created_at
+RETURNING id, product_name, product_description, price, is_active, created_at
 `
 
 type CreateProductParams struct {
-	Name        string
-	Description string
-	Price       int64
-	IsActive    bool
+	ProductName        string
+	ProductDescription string
+	Price              int64
+	IsActive           bool
 }
 
 func (q *Queries) CreateProduct(ctx context.Context, arg CreateProductParams) (Product, error) {
 	row := q.db.QueryRowContext(ctx, createProduct,
-		arg.Name,
-		arg.Description,
+		arg.ProductName,
+		arg.ProductDescription,
 		arg.Price,
 		arg.IsActive,
 	)
 	var i Product
 	err := row.Scan(
 		&i.ID,
-		&i.Name,
-		&i.Description,
+		&i.ProductName,
+		&i.ProductDescription,
 		&i.Price,
 		&i.IsActive,
 		&i.CreatedAt,
@@ -51,7 +51,7 @@ func (q *Queries) DeleteProduct(ctx context.Context, id int32) error {
 }
 
 const getProduct = `-- name: GetProduct :one
-SELECT id, name, description, price, is_active, created_at FROM products WHERE id = $1
+SELECT id, product_name, product_description, price, is_active, created_at FROM products WHERE id = $1
 `
 
 func (q *Queries) GetProduct(ctx context.Context, id int32) (Product, error) {
@@ -59,8 +59,8 @@ func (q *Queries) GetProduct(ctx context.Context, id int32) (Product, error) {
 	var i Product
 	err := row.Scan(
 		&i.ID,
-		&i.Name,
-		&i.Description,
+		&i.ProductName,
+		&i.ProductDescription,
 		&i.Price,
 		&i.IsActive,
 		&i.CreatedAt,
@@ -69,7 +69,7 @@ func (q *Queries) GetProduct(ctx context.Context, id int32) (Product, error) {
 }
 
 const listProducts = `-- name: ListProducts :many
-SELECT id, name, description, price, is_active, created_at FROM products ORDER BY created_at DESC
+SELECT id, product_name, product_description, price, is_active, created_at FROM products ORDER BY created_at DESC
 `
 
 func (q *Queries) ListProducts(ctx context.Context) ([]Product, error) {
@@ -83,8 +83,8 @@ func (q *Queries) ListProducts(ctx context.Context) ([]Product, error) {
 		var i Product
 		if err := rows.Scan(
 			&i.ID,
-			&i.Name,
-			&i.Description,
+			&i.ProductName,
+			&i.ProductDescription,
 			&i.Price,
 			&i.IsActive,
 			&i.CreatedAt,
@@ -104,32 +104,32 @@ func (q *Queries) ListProducts(ctx context.Context) ([]Product, error) {
 
 const updateProduct = `-- name: UpdateProduct :one
 UPDATE products
-SET name = $2, description = $3, price = $4, is_active = $5
+SET product_name = $2, product_description = $3, price = $4, is_active = $5
 WHERE id = $1
-RETURNING id, name, description, price, is_active, created_at
+RETURNING id, product_name, product_description, price, is_active, created_at
 `
 
 type UpdateProductParams struct {
-	ID          int32
-	Name        string
-	Description string
-	Price       int64
-	IsActive    bool
+	ID                 int32
+	ProductName        string
+	ProductDescription string
+	Price              int64
+	IsActive           bool
 }
 
 func (q *Queries) UpdateProduct(ctx context.Context, arg UpdateProductParams) (Product, error) {
 	row := q.db.QueryRowContext(ctx, updateProduct,
 		arg.ID,
-		arg.Name,
-		arg.Description,
+		arg.ProductName,
+		arg.ProductDescription,
 		arg.Price,
 		arg.IsActive,
 	)
 	var i Product
 	err := row.Scan(
 		&i.ID,
-		&i.Name,
-		&i.Description,
+		&i.ProductName,
+		&i.ProductDescription,
 		&i.Price,
 		&i.IsActive,
 		&i.CreatedAt,
