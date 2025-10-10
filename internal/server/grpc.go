@@ -4,32 +4,37 @@ import (
 	"context"
 	"log"
 	"net"
+	"strconv"
 
 	"go.uber.org/fx"
 	"google.golang.org/grpc"
 
 	pb "go-simple/api/proto/product/v1"
+	"go-simple/internal/config"
 )
 
 type Params struct {
 	fx.In
-
 	Lifecycle fx.Lifecycle
 	Product   pb.ProductServiceServer
+	Config    *config.Config
 }
 
-func NewGRPCServer(p Params) *grpc.Server {
+func CreateGRPCServer(p Params) *grpc.Server {
 	server := grpc.NewServer()
 	pb.RegisterProductServiceServer(server, p.Product)
+	return server
+}
 
+func StartGRPCServer(p Params, server *grpc.Server) {
 	p.Lifecycle.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {
-			lis, err := net.Listen("tcp", ":9090")
+			lis, err := net.Listen("tcp", ":"+strconv.Itoa(p.Config.GRPCPort))
 			if err != nil {
 				return err
 			}
 			go func() {
-				log.Println("Starting gRPC server on :9090")
+				log.Println("🚀 Starting gRPC server on :" + strconv.Itoa(p.Config.GRPCPort))
 				if err := server.Serve(lis); err != nil {
 					log.Fatalf("gRPC server failed: %v", err)
 				}
@@ -42,8 +47,6 @@ func NewGRPCServer(p Params) *grpc.Server {
 			return nil
 		},
 	})
-
-	return server
 }
 
 func GRPCLifeCycle(server *grpc.Server) {

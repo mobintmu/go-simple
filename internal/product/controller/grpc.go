@@ -4,19 +4,21 @@ import (
 	"context"
 
 	pb "go-simple/api/proto/product/v1"
-	v1 "go-simple/api/proto/product/v1"
+	"go-simple/internal/product/dto"
 	"go-simple/internal/product/service"
 
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 type ProductGRPC struct {
-	v1.UnimplementedProductServiceServer
+	pb.UnimplementedProductServiceServer
 	svc *service.Product
 }
 
-func NewProductGRPC(svc *service.Product) pb.ProductServiceServer {
-	return &ProductGRPC{svc: svc}
+func NewGRPC(svc *service.Product) pb.ProductServiceServer {
+	return &ProductGRPC{
+		svc: svc,
+	}
 }
 
 func (h *ProductGRPC) GetProductByID(ctx context.Context, req *pb.ProductRequest) (*pb.ProductResponse, error) {
@@ -30,13 +32,39 @@ func (h *ProductGRPC) GetProductByID(ctx context.Context, req *pb.ProductRequest
 }
 
 func (h *ProductGRPC) CreateProduct(ctx context.Context, req *pb.CreateProductRequest) (*pb.ProductResponse, error) {
-	panic("not implemented")
-	return nil, nil
+	p, err := h.svc.Create(ctx, dto.AdminCreateProductRequest{
+		Name:        req.Name,
+		Description: req.Description,
+		Price:       req.Price,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &pb.ProductResponse{
+		Id:          p.ID,
+		Name:        p.Name,
+		Description: p.Description,
+		Price:       p.Price,
+	}, nil
 }
 
 func (h *ProductGRPC) UpdateProduct(ctx context.Context, req *pb.UpdateProductRequest) (*pb.ProductResponse, error) {
-	panic("not implemented")
-	return nil, nil
+	p, err := h.svc.Update(ctx, dto.AdminUpdateProductRequest{
+		ID:          req.Id,
+		Name:        req.Name,
+		Description: req.Description,
+		Price:       req.Price,
+		IsActive:    req.IsActive,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &pb.ProductResponse{
+		Id:          p.ID,
+		Name:        p.Name,
+		Description: p.Description,
+		Price:       p.Price,
+	}, nil
 }
 
 func (h *ProductGRPC) DeleteProduct(ctx context.Context, req *pb.DeleteProductRequest) (*pb.ProductResponse, error) {

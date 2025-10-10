@@ -20,7 +20,7 @@ message ProductResponse {
 message CreateProductRequest {
   string name = 1;
   string description = 2;
-  double price = 3;
+  int64 price = 3;
 }
 
 message UpdateProductRequest {
@@ -28,6 +28,7 @@ message UpdateProductRequest {
   string name = 2;
   string description = 3;
   int64 price = 4;
+  bool is_active = 5;
 }
 
 message DeleteProductRequest {

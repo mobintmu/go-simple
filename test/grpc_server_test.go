@@ -11,7 +11,7 @@ import (
 )
 
 func StartGRPCServer() *fx.App {
-	os.Setenv("APP_GRPC_PORT", "9090")
+	os.Setenv("APP_GRPC_PORT", "9001")
 	os.Setenv("APP_ENV", "test")
 	os.Setenv("APP_DATABASE_DSN", "postgresql://user:pass@localhost:5432/database?sslmode=disable")
 

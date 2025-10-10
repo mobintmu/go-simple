@@ -13,6 +13,7 @@ type Config struct {
 	HTTPAddress string
 	Database    DatabaseCfg
 	ENV         string
+	GRPCPort    int
 }
 
 type DatabaseCfg struct {
@@ -25,11 +26,13 @@ func NewConfig() (*Config, error) {
 	v.SetDefault("HTTP_PORT", 4000)
 	v.SetDefault("HTTP_ADDRESS", "127.0.0.1")
 	v.SetDefault("DATABASE_DSN", "postgresql://user:pass@localhost:5432/database?sslmode=disable")
+	v.SetDefault("GRPC_PORT", 9001)
 	v.SetDefault("ENV", "development")
 	v.AutomaticEnv()
 
 	cfg := &Config{
 		HTTPPort:    v.GetInt("HTTP_PORT"),
+		GRPCPort:    v.GetInt("GRPC_PORT"),
 		HTTPAddress: v.GetString("HTTP_ADDRESS"),
 		Database: DatabaseCfg{
 			DSN: v.GetString("DATABASE_DSN"),

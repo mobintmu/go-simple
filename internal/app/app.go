@@ -6,7 +6,6 @@ import (
 	"go-simple/internal/db/sqlc"
 	"go-simple/internal/health"
 	"go-simple/internal/pkg/logger"
-	"go-simple/internal/product/controller"
 	productController "go-simple/internal/product/controller"
 	productService "go-simple/internal/product/service"
 	"go-simple/internal/server"
@@ -20,23 +19,28 @@ func NewApp() *fx.App {
 			logger.NewLogger,
 			config.NewConfig,
 			config.InitialDB,
+			//server
 			health.New,
 			server.NewGinEngine,
 			server.CreateHTTPServer,
+			server.CreateGRPCServer,
+			//db
 			migrate.NewRunner, // migration runner
 			sqlc.New,
 			//controller
 			productController.NewAdmin,
 			productController.NewClient,
-			controller.NewProductGRPC, // provides v1.ProductServiceServer
+			productController.NewGRPC,
 			//service
 			productService.New,
-			server.NewGRPCServer,
 		),
 		fx.Invoke(
 			server.RegisterRoutes,
 			server.StartHTTPServer,
-			migrate.RunMigrations, // migration hook
+			server.StartGRPCServer,
+			//migration
+			migrate.RunMigrations,
+			//life cycle
 			logger.RegisterLoggerLifecycle,
 			server.GRPCLifeCycle,
 		),

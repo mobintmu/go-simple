@@ -69,3 +69,21 @@ export SONAR_TOKEN=your-sonar-token-here
 docker compose up
 go run cmd/server/main.go
 ```
+
+
+## Generate Proto
+
+```
+protoc -I.   --go_out=. --go_opt=paths=source_relative   --go-grpc_out=. --go-grpc_opt=paths=source_relative   --grpc-gateway_out=. --grpc-gateway_opt=paths=source_relative   api/proto/product/v1/product.proto
+```
+
+
+## Install GRPC-Gateway
+
+```
+go get google.golang.org/grpc
+go get -tool github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway
+go get -tool github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2
+go get -tool google.golang.org/protobuf/cmd/protoc-gen-go
+go get -tool google.golang.org/grpc/cmd/protoc-gen-go-grpc
+```
