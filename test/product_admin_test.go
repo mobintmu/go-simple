@@ -13,7 +13,7 @@ import (
 
 func TestProductsAdmin(t *testing.T) {
 	// t.Parallel()
-	WithTestServer(t, func() {
+	WithHttpTestServer(t, func() {
 		cfg, err := config.NewConfig()
 		if err != nil {
 			t.Fatalf("Failed to load config: %v", err)

@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package product.v1;
+
+option go_package = "github.com/mobintmu/go-simple/api/proto/product/v1";
+
+import "google/protobuf/empty.proto";
+
+message ProductRequest {
+  int32 id = 1;
+}
+
+message ProductResponse {
+  int32 id = 1;
+  string name = 2;
+  string description = 3;
+  int64 price = 4;
+}
+
+message CreateProductRequest {
+  string name = 1;
+  string description = 2;
+  double price = 3;
+}
+
+message UpdateProductRequest {
+  int32 id = 1;
+  string name = 2;
+  string description = 3;
+  int64 price = 4;
+}
+
+message DeleteProductRequest {
+  int32 id = 1;
+}
+
+message ListProductsResponse {
+  repeated ProductResponse products = 1;
+}
+
+service ProductService {
+  rpc GetProductByID(ProductRequest) returns (ProductResponse);
+  rpc CreateProduct(CreateProductRequest) returns (ProductResponse);
+  rpc UpdateProduct(UpdateProductRequest) returns (ProductResponse);
+  rpc DeleteProduct(DeleteProductRequest) returns (ProductResponse);
+  rpc ListProducts(google.protobuf.Empty) returns (ListProductsResponse);
+}

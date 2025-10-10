@@ -27,7 +27,7 @@ func StartHTTPServer() *fx.App {
 	return a
 }
 
-func WithTestServer(t *testing.T, testFunc func()) {
+func WithHttpTestServer(t *testing.T, testFunc func()) {
 	a := StartHTTPServer()
 	defer a.Stop(context.Background())
 	testFunc()
@@ -35,7 +35,7 @@ func WithTestServer(t *testing.T, testFunc func()) {
 
 func TestHealthEndpoint(t *testing.T) {
 	// t.Parallel()
-	WithTestServer(t, func() {
+	WithHttpTestServer(t, func() {
 		cfg, err := config.NewConfig()
 		if err != nil {
 			t.Fatalf("Failed to load config: %v", err)
