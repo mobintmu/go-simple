@@ -40,10 +40,13 @@ docker run --name sonarqube \
   sonarqube:latest
 
 
-go test -coverprofile=coverage.out ./...
+go test -coverpkg=./... -coverprofile=coverage.out ./test
 
 go test ./... -json > report.json
+
+go tool cover -func=coverage.out
 ```
+
 
 
 ## Add sonar test
