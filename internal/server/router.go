@@ -25,7 +25,7 @@ func RegisterRoutes(engine *gin.Engine,
 	engine.GET("/health", health.Handle)
 	//Admin Product routes
 	adminGroup := engine.Group("/api/v1/admin/products")
-	adminProduct.RegisterRoutes(adminGroup)
+	adminProduct.RegisterRoutes(adminGroup, cfg)
 	//Client Product routes
 	clientGroup := engine.Group("/api/v1/products")
 	clientProduct.RegisterRoutes(clientGroup)

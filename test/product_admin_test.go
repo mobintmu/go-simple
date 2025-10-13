@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"go-simple/internal/auth"
 	"go-simple/internal/config"
 	"go-simple/internal/product/dto"
 	"io"
@@ -21,16 +22,64 @@ func TestProductsAdmin(t *testing.T) {
 		addr := fmt.Sprintf("http://%s:%d", cfg.HTTPAddress, cfg.HTTPPort)
 		addr += "/api/v1/admin/products"
 		product := dto.ProductResponse{}
-		adminCreateProduct(t, &product, addr)
-		adminListProduct(t, product, addr)
-		adminGetProductByID(t, product, addr)
-		adminUpdateProduct(t, product, addr)
-		adminDeleteProduct(t, product, addr)
-		adminVerifyProductCreated(t, product, addr)
+		adminUnAuthorizedCreateProduct(t, addr)
+		adminUnAuthorizedListProduct(t, addr)
+		token, err := auth.GenerateToken(cfg, "admin-123")
+		if err != nil {
+			t.Fatalf("Failed to generate token: %v", err)
+		}
+		adminCreateProduct(t, &product, addr, token)
+		adminListProduct(t, product, addr, token)
+		adminGetProductByID(t, product, addr, token)
+		adminUpdateProduct(t, product, addr, token)
+		adminDeleteProduct(t, product, addr, token)
+		adminVerifyProductCreated(t, product, addr, token)
 	})
 }
 
-func adminCreateProduct(t *testing.T, product *dto.ProductResponse, addr string) {
+func adminUnAuthorizedCreateProduct(t *testing.T, addr string) {
+	t.Run("Unauthorized Create Product", func(t *testing.T) {
+		productRequest := dto.AdminCreateProductRequest{
+			Name:        "Test Product",
+			Description: "This is a test product",
+			Price:       1000,
+			IsActive:    true,
+		}
+		body, err := json.Marshal(productRequest)
+		if err != nil {
+			t.Fatalf("Failed to marshal product: %v", err)
+		}
+		resp, err := http.Post(addr, ApplicationJsonHeader, bytes.NewBuffer(body))
+		if err != nil {
+			t.Fatalf("Failed to send request: %v", err)
+		}
+		if resp.StatusCode != http.StatusUnauthorized {
+			t.Errorf("Expected status 401 Unauthorized, got %d", resp.StatusCode)
+			// Optional: Print response body for debugging
+			responseBody, _ := io.ReadAll(resp.Body)
+			t.Logf(ResponseBodyMessage, string(responseBody))
+		}
+		defer resp.Body.Close()
+	})
+}
+
+func adminUnAuthorizedListProduct(t *testing.T, addr string) {
+	t.Run("Unauthorized List Products", func(t *testing.T) {
+		resp, err := http.Get(addr)
+		if err != nil {
+			t.Fatalf(FailedToSendGetMessage, err)
+		}
+		if resp.StatusCode != http.StatusUnauthorized {
+			t.Errorf("Expected status 401 Unauthorized, got %d", resp.StatusCode)
+			// Optional: Print response body for debugging
+			responseBody, _ := io.ReadAll(resp.Body)
+			t.Logf(ResponseBodyMessage, string(responseBody))
+		}
+		defer resp.Body.Close()
+	})
+}
+
+func adminCreateProduct(t *testing.T, product *dto.ProductResponse, addr string, token string) {
 	t.Run("Create Product", func(t *testing.T) {
 		productRequest := dto.AdminCreateProductRequest{
 			Name:        "Test Product",
@@ -42,28 +91,44 @@ func adminCreateProduct(t *testing.T, product *dto.ProductResponse, addr string)
 		if err != nil {
 			t.Fatalf("Failed to marshal product: %v", err)
 		}
-		resp, err := http.Post(addr, "application/json", bytes.NewBuffer(body))
+		req, err := http.NewRequest(http.MethodPost, addr, bytes.NewBuffer(body))
+		if err != nil {
+			t.Fatalf("Failed to create request: %v", err)
+		}
+		req.Header.Set("Content-Type", ApplicationJsonHeader)
+		req.Header.Set("Authorization", "Bearer "+token)
+
+		client := &http.Client{}
+		resp, err := client.Do(req)
 		if err != nil {
 			t.Fatalf("Failed to send request: %v", err)
 		}
+		defer resp.Body.Close()
+
 		if resp.StatusCode != http.StatusCreated {
 			t.Errorf("Expected status 201 Created, got %d", resp.StatusCode)
-			// Optional: Print response body for debugging
 			responseBody, _ := io.ReadAll(resp.Body)
 			t.Logf(ResponseBodyMessage, string(responseBody))
 		}
-		defer resp.Body.Close()
+
 		if err := json.NewDecoder(resp.Body).Decode(&product); err != nil {
 			t.Fatalf(FailedToDecodeMessage, err)
 		}
 	})
 }
 
-func adminListProduct(t *testing.T, product dto.ProductResponse, addr string) {
+func adminListProduct(t *testing.T, product dto.ProductResponse, addr string, token string) {
 	t.Run("List Products", func(t *testing.T) {
-		resp, err := http.Get(addr)
+		req, err := http.NewRequest(http.MethodGet, addr, nil)
 		if err != nil {
-			t.Fatalf(FailedToSendGetMessage, err)
+			t.Fatalf("Failed to create GET request: %v", err)
+		}
+		req.Header.Set("Authorization", "Bearer "+token)
+
+		client := &http.Client{}
+		resp, err := client.Do(req)
+		if err != nil {
+			t.Fatalf("Failed to send GET request: %v", err)
 		}
 		defer resp.Body.Close()
 
@@ -96,10 +161,17 @@ func adminListProduct(t *testing.T, product dto.ProductResponse, addr string) {
 	})
 }
 
-func adminGetProductByID(t *testing.T, product dto.ProductResponse, addr string) {
+func adminGetProductByID(t *testing.T, product dto.ProductResponse, addr string, token string) {
 	t.Run("Get Product By ID", func(t *testing.T) {
 		url := fmt.Sprintf("%s/%d", addr, product.ID)
-		resp, err := http.Get(url)
+		req, err := http.NewRequest(http.MethodGet, url, nil)
+		if err != nil {
+			t.Fatalf("Failed to create GET request: %v", err)
+		}
+		req.Header.Set("Authorization", "Bearer "+token)
+
+		client := &http.Client{}
+		resp, err := client.Do(req)
 		if err != nil {
 			t.Fatalf(FailedToSendGetMessage, err)
 		}
@@ -126,7 +198,7 @@ func adminGetProductByID(t *testing.T, product dto.ProductResponse, addr string)
 	})
 }
 
-func adminUpdateProduct(t *testing.T, product dto.ProductResponse, addr string) {
+func adminUpdateProduct(t *testing.T, product dto.ProductResponse, addr string, token string) {
 	t.Run("Update Product", func(t *testing.T) {
 		updateRequest := dto.AdminUpdateProductRequest{
 			Name:        "Updated Product",
@@ -144,7 +216,8 @@ func adminUpdateProduct(t *testing.T, product dto.ProductResponse, addr string) 
 		if err != nil {
 			t.Fatalf("Failed to create PUT request: %v", err)
 		}
-		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("Content-Type", ApplicationJsonHeader)
+		req.Header.Set("Authorization", "Bearer "+token)
 
 		client := &http.Client{}
 		resp, err := client.Do(req)
@@ -172,12 +245,13 @@ func adminUpdateProduct(t *testing.T, product dto.ProductResponse, addr string) 
 	})
 }
 
-func adminDeleteProduct(t *testing.T, product dto.ProductResponse, addr string) {
+func adminDeleteProduct(t *testing.T, product dto.ProductResponse, addr string, token string) {
 	t.Run("Delete Product", func(t *testing.T) {
 		req, err := http.NewRequest(http.MethodDelete, fmt.Sprintf("%s/%d", addr, product.ID), nil)
 		if err != nil {
 			t.Fatalf("Failed to create DELETE request: %v", err)
 		}
+		req.Header.Set("Authorization", "Bearer "+token)
 
 		client := &http.Client{}
 		resp, err := client.Do(req)
@@ -193,14 +267,20 @@ func adminDeleteProduct(t *testing.T, product dto.ProductResponse, addr string) 
 		}
 	})
 }
-func adminVerifyProductCreated(t *testing.T, product dto.ProductResponse, addr string) {
+func adminVerifyProductCreated(t *testing.T, product dto.ProductResponse, addr string, token string) {
 	t.Run("Verify Product Deleted", func(t *testing.T) {
-		resp, err := http.Get(fmt.Sprintf("%s/%d", addr, product.ID))
+		req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/%d", addr, product.ID), nil)
+		if err != nil {
+			t.Fatalf("Failed to create GET request: %v", err)
+		}
+		req.Header.Set("Authorization", "Bearer "+token)
+
+		client := &http.Client{}
+		resp, err := client.Do(req)
 		if err != nil {
 			t.Fatalf(FailedToSendGetMessage, err)
 		}
 		defer resp.Body.Close()
-
 		if resp.StatusCode != http.StatusBadRequest && resp.StatusCode != http.StatusInternalServerError {
 			t.Errorf("Expected error status after deletion, got %d", resp.StatusCode)
 		}

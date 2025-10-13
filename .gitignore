@@ -2,3 +2,4 @@ sonar_command.txt
 .scannerwork/
 report.json
 coverage.out
+.env

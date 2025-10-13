@@ -3,6 +3,7 @@ package test
 import (
 	"encoding/json"
 	"fmt"
+	"go-simple/internal/auth"
 	"go-simple/internal/config"
 	"go-simple/internal/product/dto"
 	"io"
@@ -21,10 +22,14 @@ func TestProductsClient(t *testing.T) {
 
 		// First, create a product via admin API so it's available to the client
 		var product dto.ProductResponse
-		adminCreateProduct(t, &product, addr+"/api/v1/admin/products")
+		token, err := auth.GenerateToken(cfg, "admin-123")
+		if err != nil {
+			t.Fatalf("Failed to generate token: %v", err)
+		}
+		adminCreateProduct(t, &product, addr+"/api/v1/admin/products", token)
 		clientListProducts(t, product, addr)
 		clientGetProductByID(t, product, addr)
-		adminDeleteProduct(t, product, addr+"/api/v1/admin/products")
+		adminDeleteProduct(t, product, addr+"/api/v1/admin/products", token)
 	})
 }
 

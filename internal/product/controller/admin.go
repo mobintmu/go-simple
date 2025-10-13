@@ -4,7 +4,9 @@ import (
 	"net/http"
 	"strconv"
 
+	"go-simple/internal/config"
 	"go-simple/internal/http/response"
+	"go-simple/internal/middleware"
 	"go-simple/internal/product/dto"
 	"go-simple/internal/product/service"
 
@@ -19,12 +21,14 @@ func NewAdmin(s *service.Product) *AdminProduct {
 	return &AdminProduct{Service: s}
 }
 
-func (c *AdminProduct) RegisterRoutes(rg *gin.RouterGroup) {
-	rg.POST("/", c.CreateProduct)
-	rg.PUT("/:id", c.UpdateProduct)
-	rg.DELETE("/:id", c.DeleteProduct)
-	rg.GET("/:id", c.GetProductByID)
-	rg.GET("/", c.ListProducts)
+func (c *AdminProduct) RegisterRoutes(rg *gin.RouterGroup, cfg *config.Config) {
+	auth := middleware.JWTAuth(cfg)
+
+	rg.POST("/", auth, c.CreateProduct)
+	rg.PUT("/:id", auth, c.UpdateProduct)
+	rg.DELETE("/:id", auth, c.DeleteProduct)
+	rg.GET("/:id", auth, c.GetProductByID)
+	rg.GET("/", auth, c.ListProducts)
 }
 
 // CreateProduct godoc

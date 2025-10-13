@@ -9,11 +9,13 @@ import (
 )
 
 type Config struct {
-	HTTPPort    int
-	HTTPAddress string
-	Database    DatabaseCfg
-	ENV         string
-	GRPCPort    int
+	HTTPPort       int
+	HTTPAddress    string
+	Database       DatabaseCfg
+	ENV            string
+	GRPCPort       int
+	JWTSecret      string
+	JWTExpiryHours int
 }
 
 type DatabaseCfg struct {
@@ -28,6 +30,8 @@ func NewConfig() (*Config, error) {
 	v.SetDefault("DATABASE_DSN", "postgresql://user:pass@localhost:5432/database?sslmode=disable")
 	v.SetDefault("GRPC_PORT", 9001)
 	v.SetDefault("ENV", "development")
+	v.SetDefault("JWT_SECRET", "this-is-a-secret-key")
+	v.SetDefault("JWT_EXPIRY_HOURS", 72)
 	v.AutomaticEnv()
 
 	cfg := &Config{
@@ -37,7 +41,9 @@ func NewConfig() (*Config, error) {
 		Database: DatabaseCfg{
 			DSN: v.GetString("DATABASE_DSN"),
 		},
-		ENV: v.GetString("ENV"),
+		ENV:            v.GetString("ENV"),
+		JWTSecret:      v.GetString("JWT_SECRET"),
+		JWTExpiryHours: v.GetInt("JWT_EXPIRY_HOURS"),
 	}
 	log.Printf("✅ Loaded config") //: %+v\n", cfg)
 	return cfg, nil
