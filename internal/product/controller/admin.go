@@ -41,6 +41,7 @@ func (c *AdminProduct) RegisterRoutes(rg *gin.RouterGroup, cfg *config.Config) {
 // @Success 201 {object} dto.ProductResponse
 // @Failure 400 {object} response.ErrorResponse
 // @Failure 500 {object} response.ErrorResponse
+// @Security BearerAuth
 // @Router /api/v1/admin/products [post]
 func (c *AdminProduct) CreateProduct(ctx *gin.Context) {
 	var req dto.AdminCreateProductRequest
@@ -67,6 +68,7 @@ func (c *AdminProduct) CreateProduct(ctx *gin.Context) {
 // @Success 200 {object} dto.ProductResponse
 // @Failure 400 {object} response.ErrorResponse
 // @Failure 500 {object} response.ErrorResponse
+// @Security BearerAuth
 // @Router /api/v1/admin/products/{id} [put]
 func (c *AdminProduct) UpdateProduct(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
@@ -96,6 +98,7 @@ func (c *AdminProduct) UpdateProduct(ctx *gin.Context) {
 // @Success 204 "No Content"
 // @Failure 400 {object} response.ErrorResponse
 // @Failure 500 {object} response.ErrorResponse
+// @Security BearerAuth
 // @Router /api/v1/admin/products/{id} [delete]
 func (c *AdminProduct) DeleteProduct(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
@@ -118,6 +121,7 @@ func (c *AdminProduct) DeleteProduct(ctx *gin.Context) {
 // @Success 200 {object} dto.ProductResponse
 // @Failure 400 {object} response.ErrorResponse
 // @Failure 500 {object} response.ErrorResponse
+// @Security BearerAuth
 // @Router /api/v1/admin/products/{id} [get]
 func (c *AdminProduct) GetProductByID(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
@@ -141,6 +145,7 @@ func (c *AdminProduct) GetProductByID(ctx *gin.Context) {
 // @Produce json
 // @Success 200 {array} dto.ClientListProductsResponse
 // @Failure 500 {object} response.ErrorResponse
+// @Security BearerAuth
 // @Router /api/v1/admin/products [get]
 func (c *AdminProduct) ListProducts(ctx *gin.Context) {
 	products, err := c.Service.ListProducts(ctx)

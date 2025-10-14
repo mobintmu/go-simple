@@ -6,6 +6,11 @@
     "paths": {
         "/api/v1/admin/products": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Get a list of all products",
                 "produces": [
                     "application/json"
@@ -36,6 +41,11 @@
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Create a new product with the provided details",
                 "consumes": [
                     "application/json"
@@ -82,6 +92,11 @@
         },
         "/api/v1/admin/products/{id}": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Get a product by its ID",
                 "tags": [
                     "Admin Products"
@@ -118,6 +133,11 @@
                 }
             },
             "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Update product details by ID",
                 "consumes": [
                     "application/json"
@@ -169,6 +189,11 @@
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Delete a product by its ID",
                 "tags": [
                     "Admin Products"
@@ -364,6 +389,14 @@
                     "example": "OK"
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "description": "Enter your JWT token in the format: Bearer \u003ctoken\u003e",
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }

@@ -66,6 +66,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/go-simple_internal_http_response.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: List all products
       tags:
       - Admin Products
@@ -95,6 +97,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/go-simple_internal_http_response.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Create a new product
       tags:
       - Admin Products
@@ -118,6 +122,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/go-simple_internal_http_response.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Delete a product by ID
       tags:
       - Admin Products
@@ -142,6 +148,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/go-simple_internal_http_response.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Get a product by ID
       tags:
       - Admin Products
@@ -176,6 +184,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/go-simple_internal_http_response.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Update an existing product
       tags:
       - Admin Products
@@ -238,4 +248,10 @@ paths:
       summary: Get health status
       tags:
       - Health
+securityDefinitions:
+  BearerAuth:
+    description: 'Enter your JWT token in the format: Bearer <token>'
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"
