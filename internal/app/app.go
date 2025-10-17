@@ -2,13 +2,14 @@ package app
 
 import (
 	"go-simple/internal/config"
-	"go-simple/internal/db/migrate"
-	"go-simple/internal/db/sqlc"
 	"go-simple/internal/health"
 	"go-simple/internal/pkg/logger"
 	productController "go-simple/internal/product/controller"
 	productService "go-simple/internal/product/service"
 	"go-simple/internal/server"
+	"go-simple/internal/storage/cache"
+	"go-simple/internal/storage/sql/migrate"
+	"go-simple/internal/storage/sql/sqlc"
 
 	"go.uber.org/fx"
 )
@@ -27,6 +28,9 @@ func NewApp() *fx.App {
 			//db
 			migrate.NewRunner, // migration runner
 			sqlc.New,
+			//cache
+			cache.NewClient,
+			cache.NewCacheStore,
 			//controller
 			productController.NewAdmin,
 			productController.NewClient,

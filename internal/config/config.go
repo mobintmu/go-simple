@@ -2,7 +2,7 @@ package config
 
 import (
 	"database/sql"
-	"go-simple/internal/db/sqlc"
+	"go-simple/internal/storage/sql/sqlc"
 	"log"
 
 	"github.com/spf13/viper"
@@ -16,10 +16,18 @@ type Config struct {
 	GRPCPort       int
 	JWTSecret      string
 	JWTExpiryHours int
+	Redis          RedisCfg
 }
 
 type DatabaseCfg struct {
 	DSN string
+}
+
+type RedisCfg struct {
+	DSN        string
+	DB         int
+	Prefix     string
+	DefaultTTL int // in minute
 }
 
 func NewConfig() (*Config, error) {
@@ -32,6 +40,10 @@ func NewConfig() (*Config, error) {
 	v.SetDefault("ENV", "development")
 	v.SetDefault("JWT_SECRET", "this-is-a-secret-key")
 	v.SetDefault("JWT_EXPIRY_HOURS", 72)
+	v.SetDefault("REDIS_DSN", "localhost:6379")
+	v.SetDefault("REDIS_DB", 0)
+	v.SetDefault("REDIS_PREFIX", "go-simple")
+	v.SetDefault("REDIS_DEFAULT_TTL", 5) // minutes
 	v.AutomaticEnv()
 
 	cfg := &Config{
@@ -44,8 +56,14 @@ func NewConfig() (*Config, error) {
 		ENV:            v.GetString("ENV"),
 		JWTSecret:      v.GetString("JWT_SECRET"),
 		JWTExpiryHours: v.GetInt("JWT_EXPIRY_HOURS"),
+		Redis: RedisCfg{
+			DSN:        v.GetString("REDIS_DSN"),
+			DB:         v.GetInt("REDIS_DB"),
+			Prefix:     v.GetString("REDIS_PREFIX"),
+			DefaultTTL: v.GetInt("REDIS_DEFAULT_TTL"), //minutes
+		},
 	}
-	log.Printf("✅ Loaded config") //: %+v\n", cfg)
+	log.Printf("✅ Loaded config: %+v\n", cfg)
 	return cfg, nil
 }
 
