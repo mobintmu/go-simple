@@ -90,3 +90,12 @@ go get -tool github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2
 go get -tool google.golang.org/protobuf/cmd/protoc-gen-go
 go get -tool google.golang.org/grpc/cmd/protoc-gen-go-grpc
 ```
+
+
+## deploy on Liara
+
+```
+npm install -g @liara/cli
+liara login
+liara deploy
+```

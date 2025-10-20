@@ -1,0 +1,8 @@
+{
+  "app": "prosave",
+  "port": 4000,
+  "build": {
+    "location": "iran"
+  },
+  "disks": []
+}

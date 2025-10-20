@@ -1,6 +1,6 @@
 module go-simple
 
-go 1.25.1
+go 1.25.0
 
 require (
 	github.com/gin-contrib/timeout v1.1.0
