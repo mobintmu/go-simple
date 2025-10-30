@@ -1,6 +1,25 @@
 # go-simple
 
-This is a simple Go project structure with Gin framework and Swagger documentation.
+The **Go-Simple** project is a dynamic, open-source **Golang** 💻 repository that serves as a modern **blueprint** for building **scalable, clean, and production-ready web services** 🚀. It showcases best practices in architecture by strictly adhering to **Clean Architecture** 🏗️ and **domain-centric modularity**, organizing code into distinct layers (controllers, services, and repositories) to ensure the application is highly **maintainable** ✅ and easily **testable** 🧪 as it grows.
+
+---
+
+### ✨ Key Architectural Features
+
+* **Dependency Management:** Uses **Uber FX** ✨ for robust dependency injection and graceful application lifecycle management.
+* **Web Framework:** Leverages the **Gin** framework 🌐 for a high-performance HTTP layer.
+* **Data Access:** Utilizes **SQLC** 💾 for type-safe interaction with the database.
+* **Performance:** Integrates a **Redis-backed cache layer** 🧠 for speed and efficiency.
+* **Communication:** Includes a **gRPC server** ⚡ to demonstrate high-performance microservice communication.
+* **Core Module:** Features a fully functional **Product Management Module** 📦 with complete **CRUD** (Create, Read, Update, Delete) functionality.
+
+---
+
+### 📚 Documentation & Learning
+
+This repository is an **evolving guide** to advanced Go development. All architectural decisions and feature implementations are thoroughly documented through a series of dedicated articles on Medium. By following this project, you can learn essential **advanced Go idioms**, master the use of **DTOs** (Data Transfer Objects) 💼, and implement professional-grade backend systems 💡.
+
+[medium.com/list/gosimple-b350f5c3bdb6](https://mobinshaterian.medium.com/list/gosimple-b350f5c3bdb6)
 
 ## Run project
 
