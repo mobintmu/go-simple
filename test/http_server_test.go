@@ -17,9 +17,11 @@ import (
 )
 
 func StartHTTPServer() *fx.App {
-	os.Setenv("APP_HTTP_PORT", "4000")
+	// Change to project root
+	os.Chdir("..")
+	defer os.Chdir("test")
 	os.Setenv("APP_ENV", "test")
-	os.Setenv("APP_DATABASE_DSN", "postgresql://user:pass@localhost:5432/database?sslmode=disable")
+	config.LoadEnv()
 
 	a := app.NewApp()
 	go a.Run()

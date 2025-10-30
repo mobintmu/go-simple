@@ -3,6 +3,7 @@ package test
 import (
 	"context"
 	app "go-simple/internal/app"
+	"go-simple/internal/config"
 	"os"
 	"testing"
 	"time"
@@ -11,9 +12,11 @@ import (
 )
 
 func StartGRPCServer() *fx.App {
-	os.Setenv("APP_GRPC_PORT", "9001")
+	// Change to project root
+	os.Chdir("..")
+	defer os.Chdir("test")
 	os.Setenv("APP_ENV", "test")
-	os.Setenv("APP_DATABASE_DSN", "postgresql://user:pass@localhost:5432/database?sslmode=disable")
+	config.LoadEnv()
 
 	a := app.NewApp()
 	go a.Run()

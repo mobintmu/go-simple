@@ -3,3 +3,4 @@ sonar_command.txt
 report.json
 coverage.out
 .env
+.env.production

@@ -1,10 +1,10 @@
 package config
 
 import (
-	"database/sql"
-	"go-simple/internal/storage/sql/sqlc"
 	"log"
+	"os"
 
+	"github.com/joho/godotenv"
 	"github.com/spf13/viper"
 )
 
@@ -33,46 +33,35 @@ type RedisCfg struct {
 func NewConfig() (*Config, error) {
 	v := viper.New()
 	v.SetEnvPrefix("APP")
-	v.SetDefault("HTTP_PORT", 4000)
-	v.SetDefault("HTTP_ADDRESS", "127.0.0.1")
-	v.SetDefault("DATABASE_DSN", "postgresql://user:pass@localhost:5432/database?sslmode=disable")
-	v.SetDefault("GRPC_PORT", 9001)
-	v.SetDefault("ENV", "development")
-	v.SetDefault("JWT_SECRET", "this-is-a-secret-key")
-	v.SetDefault("JWT_EXPIRY_HOURS", 72)
-	v.SetDefault("REDIS_DSN", "localhost:6379")
-	v.SetDefault("REDIS_DB", 0)
-	v.SetDefault("REDIS_PREFIX", "go-simple")
-	v.SetDefault("REDIS_DEFAULT_TTL", 5) // minutes
 	v.AutomaticEnv()
 
-	cfg := &Config{
-		HTTPPort:    v.GetInt("HTTP_PORT"),
-		GRPCPort:    v.GetInt("GRPC_PORT"),
-		HTTPAddress: v.GetString("HTTP_ADDRESS"),
-		Database: DatabaseCfg{
-			DSN: v.GetString("DATABASE_DSN"),
-		},
+	// Build config
+	cfg := buildConfig(v)
+
+	log.Printf("✅ Loaded config: %+v\n", cfg)
+
+	return cfg, nil
+}
+
+// buildConfig constructs the Config struct from viper values
+func buildConfig(v *viper.Viper) *Config {
+	return &Config{
+		HTTPPort:       v.GetInt("HTTP_PORT"),
+		HTTPAddress:    v.GetString("HTTP_ADDRESS"),
+		GRPCPort:       v.GetInt("GRPC_PORT"),
 		ENV:            v.GetString("ENV"),
 		JWTSecret:      v.GetString("JWT_SECRET"),
 		JWTExpiryHours: v.GetInt("JWT_EXPIRY_HOURS"),
+		Database: DatabaseCfg{
+			DSN: v.GetString("DATABASE_DSN"),
+		},
 		Redis: RedisCfg{
 			DSN:        v.GetString("REDIS_DSN"),
 			DB:         v.GetInt("REDIS_DB"),
 			Prefix:     v.GetString("REDIS_PREFIX"),
-			DefaultTTL: v.GetInt("REDIS_DEFAULT_TTL"), //minutes
+			DefaultTTL: v.GetInt("REDIS_DEFAULT_TTL"),
 		},
 	}
-	log.Printf("✅ Loaded config: %+v\n", cfg)
-	return cfg, nil
-}
-
-func InitialDB(cfg *Config) sqlc.DBTX {
-	sql, err := sql.Open("postgres", cfg.Database.DSN)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return sql
 }
 
 func (cfg *Config) IsTest() bool {
@@ -81,4 +70,19 @@ func (cfg *Config) IsTest() bool {
 
 func (cfg *Config) IsDevelopment() bool {
 	return cfg.ENV == "development"
+}
+
+func LoadEnv() {
+	env := os.Getenv("APP_ENV")
+	if env == "" {
+		env = "development"
+	}
+	// Load environment-specific .env file
+	envFile := ".env." + env
+	if err := godotenv.Load(envFile); err != nil {
+		log.Printf("⚠️  Could not load %s, falling back to .env\n", envFile)
+		panic("⚠️ could not load env file ⚠️")
+	}
+	log.Printf("📋 Loaded environment: %s\n", env)
+	log.Printf("📋 Loaded environment variables from %s\n", envFile)
 }

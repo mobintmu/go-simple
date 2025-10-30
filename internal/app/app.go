@@ -8,6 +8,7 @@ import (
 	productService "go-simple/internal/product/service"
 	"go-simple/internal/server"
 	"go-simple/internal/storage/cache"
+	"go-simple/internal/storage/sql"
 	"go-simple/internal/storage/sql/migrate"
 	"go-simple/internal/storage/sql/sqlc"
 
@@ -19,7 +20,7 @@ func NewApp() *fx.App {
 		fx.Provide(
 			logger.NewLogger,
 			config.NewConfig,
-			config.InitialDB,
+			sql.InitialDB,
 			//server
 			health.New,
 			server.NewGinEngine,
