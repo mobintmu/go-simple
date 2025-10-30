@@ -40,6 +40,10 @@ func NewConfig() (*Config, error) {
 	// Build config
 	cfg := buildConfig(v)
 
+	// Validate configuration
+	if err := ValidateConfig(cfg); err != nil {
+		return nil, fmt.Errorf("⚠️ invalid configuration: %w", err)
+	}
 	log.Printf("✅ Loaded config: %+v\n", cfg)
 
 	return cfg, nil
@@ -74,7 +78,12 @@ func (cfg *Config) IsDevelopment() bool {
 	return cfg.ENV == "development"
 }
 
-func LoadEnv() error {
+// IsProduction returns true if environment is production
+func (cfg *Config) IsProduction() bool {
+	return cfg.ENV == "production"
+}
+
+func LoadEnv() {
 	env := os.Getenv("APP_ENV")
 	if env == "" {
 		env = "development"
@@ -91,10 +100,9 @@ func LoadEnv() error {
 	for _, path := range paths {
 		if err := godotenv.Load(path); err == nil {
 			log.Printf("✅ Loaded: %s\n", path)
-			return nil
+			return
 		}
 	}
 
 	log.Printf("⚠️  No .env found\n")
-	panic("⚠️ could not load env file ⚠️")
 }
