@@ -20,7 +20,7 @@ func NewRunner(cfg *config.Config) *Runner {
 
 func (r *Runner) Run() {
 	m, err := migrate.New(
-		"file://internal/db/migrations",
+		"file://internal/storage/sql/migrations",
 		r.DSN,
 	)
 	if err != nil {
