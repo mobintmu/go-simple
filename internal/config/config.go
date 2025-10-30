@@ -1,8 +1,10 @@
 package config
 
 import (
+	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/joho/godotenv"
 	"github.com/spf13/viper"
@@ -72,17 +74,27 @@ func (cfg *Config) IsDevelopment() bool {
 	return cfg.ENV == "development"
 }
 
-func LoadEnv() {
+func LoadEnv() error {
 	env := os.Getenv("APP_ENV")
 	if env == "" {
 		env = "development"
 	}
-	// Load environment-specific .env file
-	envFile := ".env." + env
-	if err := godotenv.Load(envFile); err != nil {
-		log.Printf("⚠️  Could not load %s, falling back to .env\n", envFile)
-		panic("⚠️ could not load env file ⚠️")
-	}
 	log.Printf("📋 Loaded environment: %s\n", env)
-	log.Printf("📋 Loaded environment variables from %s\n", envFile)
+
+	paths := []string{
+		fmt.Sprintf(".env.%s", env),
+		".env",
+		filepath.Join("..", fmt.Sprintf(".env.%s", env)), // ← Parent dir
+		filepath.Join("..", ".env"),
+	}
+
+	for _, path := range paths {
+		if err := godotenv.Load(path); err == nil {
+			log.Printf("✅ Loaded: %s\n", path)
+			return nil
+		}
+	}
+
+	log.Printf("⚠️  No .env found\n")
+	panic("⚠️ could not load env file ⚠️")
 }
