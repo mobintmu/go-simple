@@ -118,3 +118,14 @@ npm install -g @liara/cli
 liara login
 liara deploy
 ```
+
+
+## Build docker file
+
+```
+docker build -t go-simple:latest .
+docker run -p 4000:4000 go-simple:latest
+
+docker run -p 4000:4000 --env-file .env go-simple:latest
+
+```
